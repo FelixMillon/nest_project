@@ -11,6 +11,7 @@ model Task {
   id        Int      @id @default(autoincrement())
   title     String
   content   String
+  priority  Int
   completed Boolean  @default(false)
   users     User[]   @relation("UserTasks")
   createdAt DateTime @default(now())

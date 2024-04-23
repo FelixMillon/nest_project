@@ -4,8 +4,8 @@ import { Injectable, NotImplementedException } from '@nestjs/common';
 export class UserService {
     constructor() {}
 
-    addUser(email: string): Promise<void> {
-        throw new NotImplementedException();
+    addUser(name:string, email: string, password: string): boolean {
+        return true
     }
 
     getUser(email: string): Promise<unknown> {
