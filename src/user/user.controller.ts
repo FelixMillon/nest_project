@@ -11,9 +11,7 @@ export class UserController {
     @Post()
     async addUser(@Body() body: User): Promise<Response>{
         return await this.userService.addUser(
-            body.name,
-            body.email,
-            body.password
+            body.email
         );
     }
     @Put()

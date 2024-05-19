@@ -1,5 +1,5 @@
 import { Injectable , NotImplementedException } from '@nestjs/common';
-import { PrismaService  } from 'src/infrastructure/database/database.service'
+import { PrismaService  } from '../infrastructure/database/database.service'
 import { Response } from '../types/response'
 import { Prisma } from '@prisma/client'
 
@@ -7,13 +7,11 @@ import { Prisma } from '@prisma/client'
 export class UserService {
     constructor(private prisma: PrismaService) {}
 
-    async addUser(name:string, email: string, password: string): Promise<Response> {
+    async addUser(email: string): Promise<Response> {
         try {
             const insertedUser = await this.prisma.user.create({
                 data:{
-                    name,
-                    email,
-                    password
+                    email
                 }
             });
             return {
