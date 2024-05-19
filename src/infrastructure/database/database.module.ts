@@ -7,7 +7,7 @@ const prisma = new PrismaClient();
   providers: [
     {
       provide: 'PrismaClient',
-      useValue: prisma,
+      useValue: prisma
     },
   ],
   exports: ['PrismaClient'],
