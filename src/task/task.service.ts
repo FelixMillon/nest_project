@@ -19,9 +19,6 @@ export class TaskService {
             return insertedTask
         } catch (error) {
             if (error instanceof Prisma.PrismaClientKnownRequestError) {
-                if (error.code === 'P2002') {
-                    throw new ConflictException("Task already exists");
-                }
                 if (error.code === 'P2003') {
                     throw new BadRequestException("User doesn't exists");
                 }
