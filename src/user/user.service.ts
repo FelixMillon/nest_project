@@ -1,52 +1,35 @@
-import { Injectable , NotImplementedException } from '@nestjs/common';
+import { Injectable , ConflictException, BadRequestException } from '@nestjs/common';
 import { PrismaService  } from '../infrastructure/database/database.service'
-import { UserResponse } from '../types/response'
+import { User } from '../types/user'
 import { Prisma } from '@prisma/client'
 
 @Injectable()
 export class UserService {
     constructor(private prisma: PrismaService) {}
 
-    async addUser(email: string): Promise<UserResponse> {
+    async addUser(email: string): Promise<User> {
         try {
             const insertedUser = await this.prisma.user.create({
                 data:{
-                    email
+                    id: email,
+                    email: email
                 },
                 include: {
                   tasks: true
                 }
             });
-            return {
-                code: 201,
-                success: true,
-                message: "user created with success",
-                email: insertedUser.email,
-                data: insertedUser
-            }
+            return insertedUser
         } catch (error) {
             if (error instanceof Prisma.PrismaClientKnownRequestError) {
                 if (error.code === 'P2002') {
-                    return {
-                        code: 409,
-                        success: false,
-                        message: "user already exists",
-                        email: null,
-                        data: {}
-                    }
+                    throw new ConflictException("user already exists");
                 }
-                return {
-                    code: 400,
-                    success: false,
-                    message: "error while creating new user",
-                    email: null,
-                    data: error
-                }
+                throw new ConflictException(`error while creating new user: ${error}`);
             }
         }
     }
 
-    async updateUser(id: number, name:string | null, email: string | null): Promise<UserResponse> {
+    async updateUser(name:string | null, email: string | null): Promise<User> {
         try {
             let updateData: { [key: string]: string } = {};
             if(typeof name === 'string'){
@@ -56,108 +39,55 @@ export class UserService {
                 updateData.email = email
             }
             if( Object.keys(updateData).length == 0){
-                return {
-                    code: 200,
-                    success: true,
-                    message: "No data found",
-                    email: null,
-                    data: {}
-                }
+                throw new BadRequestException(`No data found`)
             }
             const updatedUser = await this.prisma.user.update({
                 where: {
-                    id: id
+                    email: email
                 },
                 data: updateData
             });
-            return {
-                code: 200,
-                success: true,
-                message: "user updated with success",
-                email: updatedUser.email,
-                data: updatedUser
-            }
+            return updatedUser
+            
         } catch (error) {
             if (error instanceof Prisma.PrismaClientKnownRequestError) {
                 if (error.code === 'P2025') {
-                    return {
-                        code: 400,
-                        success: false,
-                        message: "user does not exists",
-                        email: null,
-                        data: {}
-                    }
+                    throw new BadRequestException(`User does not exists`)
                 }
-                return {
-                    code: 500,
-                    success: false,
-                    message: "error while updating new user",
-                    email: null,
-                    data: error
-                }
+                throw new BadRequestException(`error while updating new user : ${error}`)
             }
         }
     }
 
-    async deleteUser(id: number): Promise<UserResponse> {
+    async deleteUser(email: string): Promise<boolean> {
         try {
             const deletedUser = await this.prisma.user.delete({
                 where: {
-                    id: id
+                    email: email
                 }
             });
-            return {
-                code: 200,
-                success: true,
-                message: "user delete with success",
-                email: null,
-                data: deletedUser
-            }
+            return true
             } catch (error) {
             if (error instanceof Prisma.PrismaClientKnownRequestError) {
-                return {
-                    code: 500,
-                    success: false,
-                    message: "error while updating new user",
-                    email: null,
-                    data: error
-                }
+                throw new BadRequestException(`error while deleting user : ${error}`)
             }
         }
     }
 
-    async getUser(email: string): Promise<UserResponse> {
+    async getUser(userId: string): Promise<User> {
         try {
             const insertedUser = await this.prisma.user.findFirstOrThrow({
                 where:{
-                    email
+                    id: userId
                 }
             });
-            return {
-                code: 200,
-                success: true,
-                message: "user finded with success",
-                email: insertedUser.email,
-                data: insertedUser
-            }
+            return insertedUser
         } catch (error) {
             if (error instanceof Prisma.PrismaClientKnownRequestError) {
                 if (error.code === 'P2025') {
-                    return {
-                        code: 400,
-                        success: false,
-                        message: "user doesn't exists",
-                        email: null,
-                        data: {}
-                    }
+                    throw new BadRequestException(`user doesn't exists`)
                 }
-                return {
-                    code: 400,
-                    success: false,
-                    message: "error while getting user",
-                    email: null,
-                    data: error
-                }
+                throw new BadRequestException(`error while getting user : ${error}`)
             }
         }
     }

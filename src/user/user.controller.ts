@@ -16,42 +16,29 @@ export class UserController {
             return res.status(400).json({
                 code: 400,
                 success: false,
-                message: "Invalid email format",
-                data: null
+                message: "Invalid email format"
             });
         }
         const userAdded = await this.userService.addUser(
             email
         );
-        return res.status(userAdded.code).json({
-            userAdded
-        });
+        return res.status(201).json(userAdded);
     }
     @Put()
-    async updateUser(@Body() body: User): Promise<FormatResponse>{
-        return await this.userService.updateUser(
-            body.id,
+    async updateUser(@Body() body: User, @Res() res: Response): Promise<Response>{
+        const userUpdated = await this.userService.updateUser(
             body.email,
             body.password
         );
+        return res.status(200).json(userUpdated);
     }
-    @Get()
-    async getUser(@Body() body: User, @Res() res: Response): Promise<Response>{
-        const email = body.email
-        if (!this.isValidEmail(email)) {
-            return res.status(400).json({
-                code: 400,
-                success: false,
-                message: "Invalid email format",
-                data: null
-            });
-        }
+    @Get(':userId')
+    async getUser(@Param('userId') userId: string, @Res() res: Response): Promise<Response>{
+
         const userGetted = await this.userService.getUser(
-            email
+            userId
         );
-        return res.status(userGetted.code).json({
-            userGetted
-        });
+        return res.status(200).json(userGetted);
     }
 
     private isValidEmail(email) {

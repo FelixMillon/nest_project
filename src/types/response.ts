@@ -10,6 +10,7 @@ export type UserResponse = {
     success: boolean;
     message: string;
     email: string | null;
+    id: string | null;
     data: Object;
 };
 
@@ -17,6 +18,8 @@ export type TaskResponse = {
     code: number;
     success: boolean;
     message: string;
-    email: string | null;
+    name: string | null;
+    priority: number | null;
+    userId: string | null;
     data: Object;
 };
