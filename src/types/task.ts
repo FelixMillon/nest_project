@@ -1,11 +1,10 @@
-import { User } from './user'
 export type Task = {
     id: number | null;
-    title: string;
-    content: string;
+    name: string;
+    content: string | null;
     priority: number;
-    completed: boolean;
-    users: User[] | null;
+    completed: boolean | null;
+    userId: string;
     createdAt: Date | null;
     updatedAt: Date | null;
 };

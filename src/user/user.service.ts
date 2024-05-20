@@ -1,46 +1,35 @@
-import { Injectable , NotImplementedException } from '@nestjs/common';
+import { Injectable , ConflictException, BadRequestException } from '@nestjs/common';
 import { PrismaService  } from '../infrastructure/database/database.service'
-import { Response } from '../types/response'
+import { User } from '../types/user'
 import { Prisma } from '@prisma/client'
 
 @Injectable()
 export class UserService {
     constructor(private prisma: PrismaService) {}
 
-    async addUser(email: string): Promise<Response> {
+    async addUser(email: string): Promise<User> {
         try {
             const insertedUser = await this.prisma.user.create({
                 data:{
-                    email
+                    id: email,
+                    email: email
+                },
+                include: {
+                  tasks: true
                 }
             });
-            return {
-                code: 201,
-                success: true,
-                message: "user created with success",
-                data: insertedUser
-            }
-            } catch (e) {
-            if (e instanceof Prisma.PrismaClientKnownRequestError) {
-                if (e.code === 'P2002') {
-                    return {
-                        code: 400,
-                        success: false,
-                        message: "user already exists",
-                        data: {}
-                    }
+            return insertedUser
+        } catch (error) {
+            if (error instanceof Prisma.PrismaClientKnownRequestError) {
+                if (error.code === 'P2002') {
+                    throw new ConflictException("user already exists");
                 }
-                return {
-                    code: 400,
-                    success: false,
-                    message: "error while creating new user",
-                    data: e
-                }
+                throw new ConflictException(`error while creating new user: ${error}`);
             }
         }
     }
 
-    async updateUser(id: number, name:string | null, email: string | null): Promise<Response> {
+    async updateUser(name:string | null, email: string | null): Promise<User> {
         try {
             let updateData: { [key: string]: string } = {};
             if(typeof name === 'string'){
@@ -50,75 +39,64 @@ export class UserService {
                 updateData.email = email
             }
             if( Object.keys(updateData).length == 0){
-                return {
-                    code: 200,
-                    success: true,
-                    message: "No data found",
-                    data: {}
-                }
+                throw new BadRequestException(`No data found`)
             }
             const updatedUser = await this.prisma.user.update({
                 where: {
-                    id: id
+                    email: email
                 },
                 data: updateData
             });
-            return {
-                code: 200,
-                success: true,
-                message: "user updated with success",
-                data: updatedUser
-            }
-        } catch (e) {
-            if (e instanceof Prisma.PrismaClientKnownRequestError) {
-                if (e.code === 'P2025') {
-                    return {
-                        code: 400,
-                        success: false,
-                        message: "user does not exists",
-                        data: {}
-                    }
+            return updatedUser
+            
+        } catch (error) {
+            if (error instanceof Prisma.PrismaClientKnownRequestError) {
+                if (error.code === 'P2025') {
+                    throw new BadRequestException(`User does not exists`)
                 }
-                return {
-                    code: 500,
-                    success: false,
-                    message: "error while updating new user",
-                    data: e
-                }
+                throw new BadRequestException(`error while updating new user : ${error}`)
             }
         }
     }
 
-    async deleteUser(id: number): Promise<Response> {
+    async deleteUser(email: string): Promise<boolean> {
         try {
             const deletedUser = await this.prisma.user.delete({
                 where: {
-                    id: id
+                    email: email
                 }
             });
-            return {
-                code: 200,
-                success: true,
-                message: "user delete with success",
-                data: deletedUser
-            }
-            } catch (e) {
-            if (e instanceof Prisma.PrismaClientKnownRequestError) {
-                return {
-                    code: 500,
-                    success: false,
-                    message: "error while updating new user",
-                    data: e
-                }
+            return true
+            } catch (error) {
+            if (error instanceof Prisma.PrismaClientKnownRequestError) {
+                throw new BadRequestException(`error while deleting user : ${error}`)
             }
         }
     }
 
-    getUser(email: string): Promise<unknown> {
-        throw new NotImplementedException();
+    async getUser(userId: string): Promise<User> {
+        try {
+            const insertedUser = await this.prisma.user.findFirstOrThrow({
+                where:{
+                    id: userId
+                }
+            });
+            return insertedUser
+        } catch (error) {
+            if (error instanceof Prisma.PrismaClientKnownRequestError) {
+                if (error.code === 'P2025') {
+                    throw new BadRequestException(`user doesn't exists`)
+                }
+                throw new BadRequestException(`error while getting user : ${error}`)
+            }
+        }
     }
 
-    resetData(): Promise<void> {
-        throw new NotImplementedException();
+    async resetData(): Promise<void> {
+        try {
+            const insertedUser = await this.prisma.user.deleteMany({});
+        } catch (error) {
+            console.error("Une erreur s'est produite lors de la suppression des données :", error);
+        }
     }
 }
