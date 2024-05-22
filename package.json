@@ -1,7 +1,7 @@
 {
   "name": "nestjs-final-test",
   "version": "0.0.1",
-  "description": "",
+  "description": "Pour ce test final vous allez être évalués sur votre maîtrise du framework NestJS. Ce projet, qui est une TodoList et qu'il vous faudra dupliquer (fork), contient un certain nombre de tests automatisés. Chacun d'entre eux couvre une fonctionnalité spécifique : création d'un utilisateur, création d'une tâche, vérification que le serveur renvoie une erreur dans tel ou tel cas etc.",
   "author": "",
   "private": true,
   "license": "UNLICENSED",
@@ -32,10 +32,10 @@
     "@nestjs/mongoose": "^10.0.4",
     "@nestjs/platform-express": "^10.0.0",
     "@nestjs/typeorm": "^10.0.2",
-    "@prisma/client": "^5.12.1",
+    "@prisma/client": "^5.14.0",
     "mongoose": "^8.2.1",
     "pg": "^8.11.3",
-    "prisma": "^5.12.1",
+    "prisma": "^5.14.0",
     "reflect-metadata": "^0.2.0",
     "rxjs": "^7.8.1",
     "typeorm": "^0.3.20"
@@ -79,5 +79,10 @@
     ],
     "coverageDirectory": "../coverage",
     "testEnvironment": "node"
-  }
+  },
+  "main": ".eslintrc.js",
+  "directories": {
+    "test": "test"
+  },
+  "keywords": []
 }
