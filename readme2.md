@@ -17,3 +17,11 @@ lancement :                 npm run start:postgresWin
 ORM : prisma
 SGBD : postgreSQL
 
+# ENV
+
+# database
+DATABASE_PORT=24000
+DATABASE_NAME=nestjs-final-test-db
+ 
+DATABASE_URL="postgresql://postgres:postgres@localhost:24000/nestjs-final-test-db?schema=public"
+
