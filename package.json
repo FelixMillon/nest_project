@@ -20,9 +20,13 @@
     "test:e2e:mongodb": "export DBMS=mongodb; docker-compose --env-file ./.env -f ./docker/docker-compose-mongodb.yml up -d; jest --config ./test/jest-e2e.json",
     "test:e2e:postgres": "export DBMS=postgres; docker-compose --env-file ./.env -f ./docker/docker-compose-postgres.yml up -d; jest --config ./test/jest-e2e.json",
     "test:e2e:postgresWin": "set DBMS=postgres && docker-compose --env-file ./.env -f ./docker/docker-compose-postgres.yml up -d && jest --config ./test/jest-e2e.json",
+    "test:setUpAndE2EWin": "set DBMS=postgres && docker-compose --env-file ./.env -f ./docker/docker-compose-postgres.yml up -d && prisma generate && prisma db push &&  jest --config ./test/jest-e2e.json",
+    "test:setUpAndE2E": "export DBMS=postgres ; docker-compose --env-file ./.env -f ./docker/docker-compose-postgres.yml up -d ; prisma generate ; prisma db push ; jest --config ./test/jest-e2e.json",
     "start:mongodb": "export DBMS=mongodb; docker-compose --env-file ./.env -f ./docker/docker-compose-mongodb.yml up -d; npm run start:dev",
     "start:postgres": "export DBMS=postgres; docker-compose --env-file ./.env -f ./docker/docker-compose-postgres.yml up -d; npm run start:dev",
     "start:postgresWin": "set DBMS=postgres && docker-compose --env-file ./.env -f ./docker/docker-compose-postgres.yml up -d && npm run start:dev",
+    "start:setUpAndStartWin": "set DBMS=postgres && docker-compose --env-file ./.env -f ./docker/docker-compose-postgres.yml up -d && prisma generate && prisma db push && npm run start:dev",
+    "start:setUpAndStart": "export DBMS=postgres ; docker-compose --env-file ./.env -f ./docker/docker-compose-postgres.yml up -d ; prisma generate ; prisma db push ; npm run start:dev",
     "prisma": "prisma"
   },
   "dependencies": {
